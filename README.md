@@ -8,4 +8,4 @@ Just go ahead and play : )
 # How to Run
 
 To start playing the game, type the following commands:
-`make && ./snake'
+`make && ./snake`
