@@ -1,0 +1,33 @@
+board.cc:6:6: error: ‘Board’ has not been declared
+ void Board::Init(){
+      ^~~~~
+board.cc: In function ‘void Init()’:
+board.cc:7:3: error: ‘initscr’ was not declared in this scope
+   initscr();
+   ^~~~~~~
+board.cc:8:3: error: ‘curs_set’ was not declared in this scope
+   curs_set();
+   ^~~~~~~~
+board.cc:9:3: error: ‘cbreak’ was not declared in this scope
+   cbreak();
+   ^~~~~~
+board.cc:10:10: error: ‘stdscr’ was not declared in this scope
+   keypad(stdscr,TRUE);
+          ^~~~~~
+board.cc:10:10: note: suggested alternative: ‘struct’
+   keypad(stdscr,TRUE);
+          ^~~~~~
+          struct
+board.cc:10:17: error: ‘TRUE’ was not declared in this scope
+   keypad(stdscr,TRUE);
+                 ^~~~
+board.cc:10:3: error: ‘keypad’ was not declared in this scope
+   keypad(stdscr,TRUE);
+   ^~~~~~
+board.cc:11:3: error: ‘noecho’ was not declared in this scope
+   noecho();
+   ^~~~~~
+board.cc:12:3: error: ‘refresh’ was not declared in this scope
+   refresh();
+   ^~~~~~~
+make: *** [board.o] Error 1
