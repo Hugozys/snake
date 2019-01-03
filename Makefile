@@ -4,7 +4,7 @@ DFLAGS = -MMD
 CC = g++
 DEBUG = -ggdb3
 #TUI = -DTUI
-LIBS = -lncurses -lmenu -lglog
+LIBS = -lncurses -lmenu #-lglog
 SRCS = $(wildcard *.cc)
 OBJS = $(patsubst %.cc, %.o, $(SRCS))
 

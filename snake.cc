@@ -1,5 +1,32 @@
 #include "snake.hpp"
 #include "exception.hpp"
+#include <unistd.h>
+
+void Snake::Clear(){
+  direction_ = RIGHT;
+  body_.clear();
+  head_.reset();
+  tail_.reset();
+  food_.reset();
+}
+
+
+bool Snake::IsFood(Pdot & dot){
+  return food_->r_co == dot->r_co && food_->c_co == dot->c_co;
+}
+
+void Snake::GenerateFood(){
+  Pdot temp(nullptr);
+  do{
+    int food_y = rand() % row_ + 1;
+    int food_x = rand() % col_ + 1;
+    temp.reset(new Dot(food_y,food_x,nullptr));
+  }while(body_.count(Hash(temp)));
+  food_ = temp;
+}
+void Snake::DrawFood(WINDOW * win){
+  mvwaddch(win,food_->r_co,food_->c_co,ACS_DIAMOND);
+}
 void Snake::Init(int h_y, int h_x, int len){
   body_.clear();
   head_ = Pdot(new Dot(h_y,h_x,nullptr));
@@ -11,6 +38,7 @@ void Snake::Init(int h_y, int h_x, int len){
     curr = curr.get()->next;
   }
   tail_ = curr;
+  GenerateFood();
 }
 
 void Snake::DrawDot(WINDOW * win, int y, int x, bool live){
@@ -49,9 +77,18 @@ std::pair<int,int> Snake::GetNextTail(){
   }
   return std::make_pair(next_y,next_x);
 }
-void Snake::Move(WINDOW * win){
+bool Snake::Move(WINDOW * win){
+  bool eat_food = false;
+  Pdot n_dot(nullptr);
   auto n_tl = GetNextTail();
-  Pdot n_dot(new Dot(n_tl.first, n_tl.second, nullptr));
+  n_dot.reset(new Dot(n_tl.first, n_tl.second, nullptr));
+  if(IsFood(n_dot)){
+    tail_->next = n_dot;
+    tail_ = n_dot;
+    DrawDot(win,n_dot->r_co,n_dot->c_co,true);
+    eat_food = true;
+    return true;
+  }
   body_.erase(Hash(head_));
   if(body_.count(Hash(n_dot))) throw GameOver();
   DrawDot(win,head_->r_co,head_->c_co,false);
@@ -60,5 +97,6 @@ void Snake::Move(WINDOW * win){
   tail_ = n_dot;
   body_.insert(Hash(tail_));
   DrawDot(win,tail_->r_co,tail_->c_co,true);
+  return eat_food;
 }
     

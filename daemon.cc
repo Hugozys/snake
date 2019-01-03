@@ -20,7 +20,7 @@ void Daemon::Start(){
 	throw Quit();
       }
     }
-    catch(const Menu & e){
+    catch(const GoMenu & e){
       status_ = MENU;
     }
     catch(const Play & e){

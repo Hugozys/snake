@@ -6,11 +6,7 @@
 #include <cstdlib>
 #include "board.hpp"
 #include "exception.hpp"
-
-//3 4   2 + (1,2)
-//5 6 7 8 9  4 + (1,2,3,4,5)
-//[4     10] 10 - 4 = 6  7 -2 
-//[2     5] 5-2 = 3
+#include <sstream>
 void Board::InitSnake(){
   snake_.SetMeta(cols_num_ - 2, rows_num_ - 2);
   srand(time(NULL));
@@ -18,6 +14,8 @@ void Board::InitSnake(){
   int head_x = rand() % (cols_num_ - 2) + 1;
   snake_.Init(head_y,head_x,5);
   snake_.Draw(gd_win_.get());
+  snake_.GenerateFood();
+  snake_.DrawFood(gd_win_.get());
   wrefresh(gd_win_.get());
 }
 
@@ -34,6 +32,8 @@ void Board::Init(){
   menu_.CreateNewWindow();
   start_y_ = (LINES-rows_num_)/2;
   start_x_ = (COLS-cols_num_)/2;
+  gd_win_.reset(newwin(rows_num_, cols_num_,start_y_,start_x_));
+  keypad(gd_win_.get(),true);
   InitSnake();
 }
 
@@ -47,36 +47,79 @@ void Board::GoToMenu(){
 }
 
 void Board::UpdateScore(){
+  ++score_;
   string new_num = std::to_string(score_);
   mvaddstr((LINES-rows_num_)/2 - 1, (COLS-cols_num_)/2 + 7, new_num.c_str()); 
 }
 
-void Board::UpdateSnake(){
-  
-}
 void Board::PlaceGame(){
-  gd_win_.reset(newwin(rows_num_, cols_num_,start_y_,start_x_));
   box(gd_win_.get(),0,0);
   mvaddstr((LINES-rows_num_)/2 - 1, (COLS-cols_num_)/2, "score: ");
   UpdateScore();
-  UpdateSnake();
   wrefresh(gd_win_.get());
   refresh();
 }
 
+void Board::PollInput(){
+  int ch;
+  ch = wgetch(gd_win_.get());
+  switch(ch){
+  case 'b':
+    cbreak();
+    throw GoMenu();
+  case 'q':
+    throw Quit();
+  case KEY_DOWN:
+    if (snake_.GetDir() != Snake::UP)
+      snake_.SetDir(Snake::DOWN);
+    break;
+  case KEY_UP:
+    if (snake_.GetDir() != Snake::DOWN)
+      snake_.SetDir(Snake::UP);
+    break;
+  case KEY_LEFT:
+    if (snake_.GetDir() != Snake::RIGHT)
+      snake_.SetDir(Snake::LEFT);
+    break;
+  case KEY_RIGHT:
+    if (snake_.GetDir() != Snake::LEFT)
+      snake_.SetDir(Snake::RIGHT);
+    break;
+  default:
+    break;
+  }
+}
+
 void Board::GoToPlay(){
   clear();
+  wclear(gd_win_.get());
   refresh();
+  wrefresh(gd_win_.get());
   PlaceGame();
-  InitSnake();
-  //WaitCtrl();
+  InitSnake(); 
   while(true){
-    snake_.Move(gd_win_.get());
-    wrefresh(gd_win_.get());
-    //refresh();
-    sleep(2);
+    try{
+      if(snake_.Move(gd_win_.get())){
+	UpdateScore();
+	snake_.GenerateFood();
+	snake_.DrawFood(gd_win_.get());
+      }
+      wrefresh(gd_win_.get());
+      refresh();
+      halfdelay(4);
+      PollInput();
+    }
+    catch(const GameOver & e){
+      std::stringstream ss;
+      ss <<"Game Over. You Lose! Score: "<<score_;
+      auto words(ss.str());
+      Clear();
+      mvwaddstr(gd_win_.get(), rows_num_/2, (cols_num_ - static_cast<int>(words.size()))/2, words.c_str());
+      wrefresh(gd_win_.get());    
+      WaitCtrl();
+      throw GoMenu();
+    }
   }
-    
 }
 
 void Board::WaitCtrl(){
@@ -86,7 +129,9 @@ void Board::WaitCtrl(){
     case 'q':
       throw Quit();
     case 'b':
-      throw Menu();
+      throw GoMenu();
+    case 10:
+      throw Play();
     default:
       break;
     }
@@ -102,4 +147,15 @@ void Board::GoToHelp(){
   }
   refresh();
   WaitCtrl();
+}
+
+void Board::Clear(){
+  cbreak();
+  score_ = -1;
+  wclear(gd_win_.get());
+  wrefresh(gd_win_.get());
+  clear();
+  refresh();
+  snake_.Clear();
+  
 }

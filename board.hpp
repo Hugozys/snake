@@ -15,11 +15,13 @@ class Board{
   void UpdateScore();
   void UpdateSnake();
   void PlaceGame();
+  void PollInput();
 public:
   void GoToMenu();
   void GoToPlay();
   void GoToHelp();
-  Board():cols_num_(70),rows_num_(20),score_(0),gd_win_(nullptr,&delwin){
+  void Clear();
+  Board():cols_num_(70),rows_num_(20),score_(-1),gd_win_(nullptr,&delwin){
     Init();
   }
   ~Board(){}
