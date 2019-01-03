@@ -9,7 +9,7 @@ SRCS = $(wildcard *.cc)
 OBJS = $(patsubst %.cc, %.o, $(SRCS))
 
 snake: $(OBJS)
-	$(CC)  $^  -o $@ $(LIBS)
+	$(CC) $(DEBUG)  $^  -o $@ $(LIBS)
 
 %.o: %.cc
 	$(CC) $(CXXFLAGS) $(DEBUG) $(TUI)  -c $< $(DFLAGS) -o $@

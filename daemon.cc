@@ -9,10 +9,13 @@ void Daemon::Start(){
       switch(status_){
       case MENU:
 	bd_.GoToMenu();
+	break;
       case HELP:
 	bd_.GoToHelp();
+	break;
       case PLAY:
 	bd_.GoToPlay();
+	break;
       case QUIT:
 	throw Quit();
       }

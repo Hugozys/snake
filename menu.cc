@@ -21,6 +21,7 @@ void Menu::UserInteract(){
   case 10:
     {
       ITEM * curr = current_item(menu_.get());
+      Hide();
       if (curr == p_chs_[0]){
 	throw Play();
       }
