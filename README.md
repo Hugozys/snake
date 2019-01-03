@@ -6,7 +6,7 @@ Just go ahead and play : )
 
 # Dependancies
 
-You need to have ncurses library installed on your linux system. The game was developed on Ubutun 18.04 Distro.
+You need to have ncurses and glog library installed on your linux system. The game was developed on Ubutun 18.04 Distro.
 # How to Run
 
 To start playing the game, type the following commands: `make` and `./snake`
