@@ -157,6 +157,5 @@ void Board::Clear(){
   wrefresh(gd_win_.get());
   clear();
   refresh();
-  snake_.Clear();
-  
+  snake_.Clear();  
 }
