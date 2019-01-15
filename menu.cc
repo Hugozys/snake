@@ -1,6 +1,21 @@
 #include "menu.hpp"
 #include "exception.hpp"
 #include <glog/logging.h>
+void Menu::InitMenu(){
+  const char * order[] = { "1:", "2:","3:",nullptr,};
+  const char * choices[] = {
+      "Play",
+      "Help",
+      "Exit",
+      nullptr,
+  };
+  for (int i = 0; i < 4; ++i){
+    choices_.push_back(std::unique_ptr<ITEM,decltype(&free_item)>(new_item(order[i],choices[i]),&free_item));
+    p_chs_[i] = choices_[i].get();
+  }
+  menu_.reset(new_menu(p_chs_.data()));
+}
+
 void Menu::CreateNewWindow(){
   menu_win_.reset(newwin(10,60,2*LINES/5,(COLS-60)/2));
   keypad(menu_win_.get(),TRUE);

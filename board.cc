@@ -24,6 +24,7 @@ void Board::Init(){
   help_.push_back("q\tQuit the Game. (This works at anytime)");
   help_.push_back("Use arrow strokes on the keyboard to control how snake moves");
   initscr();
+  menu_.InitMenu();
   curs_set(0);
   cbreak();
   keypad(stdscr,TRUE);
