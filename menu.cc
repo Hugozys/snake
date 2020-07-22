@@ -1,6 +1,5 @@
 #include "menu.hpp"
 #include "exception.hpp"
-#include <glog/logging.h>
 void Menu::InitMenu(){
   const char * order[] = { "1:", "2:","3:",nullptr,};
   const char * choices[] = {
